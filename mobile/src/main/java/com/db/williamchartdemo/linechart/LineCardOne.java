@@ -54,9 +54,9 @@ public class LineCardOne extends CardController {
         super.show(action);
 
         // Tooltip
-        mTip = new Tooltip(mContext, R.layout.linechart_three_tooltip, R.id.value);
+        mTip = new Tooltip(mContext, R.layout.linechart_three_tooltip, R.id.value1);
 
-        ((TextView) mTip.findViewById(R.id.value)).setTypeface(
+        ((TextView) mTip.findViewById(R.id.value1)).setTypeface(
                 Typeface.createFromAsset(mContext.getAssets(), "OpenSans-Semibold.ttf"));
 
         mTip.setVerticalAlignment(Tooltip.Alignment.BOTTOM_TOP);
@@ -100,7 +100,7 @@ public class LineCardOne extends CardController {
             public void run() {
 
                 mBaseAction.run();
-                mTip.prepare(mChart.getEntriesArea(0).get(3), mValues[0][3]);
+                mTip.prepare(mChart.getEntriesArea(0).get(3), mValues[0]);
                 mChart.showTooltip(mTip, true);
             }
         };

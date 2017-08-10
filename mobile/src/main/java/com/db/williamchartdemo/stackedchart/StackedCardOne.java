@@ -1,14 +1,20 @@
 package com.db.williamchartdemo.stackedchart;
 
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v7.widget.CardView;
+import android.view.View;
 import android.widget.TextView;
 
+import android.widget.Toast;
+import com.db.chart.tooltip.Tooltip;
 import com.db.chart.util.Tools;
 import com.db.chart.animation.Animation;
 import com.db.chart.listener.OnEntryClickListener;
@@ -39,7 +45,8 @@ public class StackedCardOne extends CardController {
             {{30f, 40f, 25f, 25f, 40f, 25f, 25f, 30f, 30f, 25f, 40f, 25f},
                     {30f, 30f, 25f, 40f, 25f, 30f, 40f, 30f, 30f, 25f, 25f, 25f},
                     {30f, 30f, 25f, 25f, 25f, 25f, 25f, 30f, 40f, 25, 25, 40f}};
-
+    private Tooltip mTip;
+    private final Context mContext;
 
     public StackedCardOne(CardView card) {
 
@@ -49,6 +56,7 @@ public class StackedCardOne extends CardController {
         mLegendOneRed = (TextView) card.findViewById(R.id.state_one);
         mLegendOneYellow = (TextView) card.findViewById(R.id.state_two);
         mLegendOneGreen = (TextView) card.findViewById(R.id.state_three);
+        mContext = card.getContext();
     }
 
 
@@ -63,7 +71,8 @@ public class StackedCardOne extends CardController {
                 @Override
                 public void onClick(int setIndex, int entryIndex, Rect rect) {
 
-                    if (setIndex == 2) mLegendOneRed.animate()
+                    if (setIndex == 2) {
+                        mLegendOneRed.animate()
                             .scaleY(1.3f)
                             .scaleX(1.3f)
                             .setDuration(100)
@@ -74,6 +83,8 @@ public class StackedCardOne extends CardController {
                                     mLegendOneRed.animate().scaleY(1.0f).scaleX(1.0f).setDuration(100);
                                 }
                             });
+                        Toast.makeText(mChart.getContext(), "entryIndex="+entryIndex, Toast.LENGTH_SHORT).show();
+                    }
                     else if (setIndex == 1) {
                         mLegendOneYellow.animate()
                                 .scaleY(1.3f)
@@ -89,6 +100,7 @@ public class StackedCardOne extends CardController {
                                                 .setDuration(100);
                                     }
                                 });
+                        Toast.makeText(mChart.getContext(), "entryIndex="+entryIndex, Toast.LENGTH_SHORT).show();
                     } else {
                         mLegendOneGreen.animate()
                                 .scaleY(1.3f)
@@ -104,6 +116,7 @@ public class StackedCardOne extends CardController {
                                                 .setDuration(100);
                                     }
                                 });
+                        Toast.makeText(mChart.getContext(), "entryIndex="+entryIndex, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -127,10 +140,34 @@ public class StackedCardOne extends CardController {
         stackBarSet.setColor(Color.parseColor("#ff7a57"));
         mChart.addData(stackBarSet);
 
+        // Tooltip
+        mTip = new Tooltip(mContext, R.layout.linechart_three_tooltip, R.id.value1, R.id.value2);
+
+        ((TextView) mTip.findViewById(R.id.value1)).setTypeface(
+            Typeface.createFromAsset(mContext.getAssets(), "OpenSans-Semibold.ttf"));
+
+        mTip.setVerticalAlignment(Tooltip.Alignment.BOTTOM_TOP);
+        mTip.setDimensions((int) Tools.fromDpToPx(58), (int) Tools.fromDpToPx(54));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+
+            mTip.setEnterAnimation(PropertyValuesHolder.ofFloat(View.ALPHA, 1),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f),
+                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f)).setDuration(200);
+
+            mTip.setExitAnimation(PropertyValuesHolder.ofFloat(View.ALPHA, 0),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f),
+                PropertyValuesHolder.ofFloat(View.SCALE_X, 0f)).setDuration(200);
+
+            mTip.setPivotX(Tools.fromDpToPx(65) / 2);
+            mTip.setPivotY(Tools.fromDpToPx(25));
+        }
+
         int[] order = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
         mChart.setXLabels(XRenderer.LabelPosition.OUTSIDE)
                 .setYLabels(YRenderer.LabelPosition.NONE)
                 .setValueThreshold(89.f, 89.f, thresPaint)
+                .setTooltips(mTip)
                 .show(new Animation().inSequence(.5f, order).withEndAction(action));
     }
 

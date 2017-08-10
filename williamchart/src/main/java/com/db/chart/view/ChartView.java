@@ -616,7 +616,7 @@ public abstract class ChartView extends RelativeLayout {
      * @param rect  {@link Rect} containing the bounds of last clicked entry
      * @param value Value of the last entry clicked
      */
-    private void toggleTooltip(@NonNull Rect rect, float value) {
+    private void toggleTooltip(@NonNull Rect rect, float[] value) {
 
         checkNotNull(rect);
         if (!mTooltip.on()) {
@@ -680,7 +680,7 @@ public abstract class ChartView extends RelativeLayout {
      */
     private void dismissTooltip(@NonNull Tooltip tooltip) {
 
-        dismissTooltip(checkNotNull(tooltip), null, 0);
+        dismissTooltip(checkNotNull(tooltip), null, new float[]{0});
     }
 
 
@@ -689,7 +689,7 @@ public abstract class ChartView extends RelativeLayout {
      *
      * @param tooltip View to be dismissed
      */
-    private void dismissTooltip(@NonNull final Tooltip tooltip, final Rect rect, final float value) {
+    private void dismissTooltip(@NonNull final Tooltip tooltip, final Rect rect, final float[] value) {
 
         checkNotNull(tooltip);
 
@@ -1656,15 +1656,26 @@ public abstract class ChartView extends RelativeLayout {
             if (mEntryListener != null || mTooltip != null) { // Check if tap on any entry
                 int nSets = mRegions.size();
                 int nEntries = mRegions.get(0).size();
-                for (int i = 0; i < nSets; i++)
-                    for (int j = 0; j < nEntries; j++)
+                for (int i = 0; i < nSets; i++){
+                    int size = data.get(i).getEntries().size();
+                    float[] values = new float[size];
+                    for (int k = 0; k < data.get(i).getEntries().size(); k++) {
+                        values[k] = data.get(i).getEntries().get(k).getValue();
+                    }
+                    for (int j = 0; j < nEntries; j++){
                         if (mRegions.get(i).get(j).contains((int) ev.getX(), (int) ev.getY())) {
                             if (mEntryListener != null)  // Trigger entry callback
                                 mEntryListener.onClick(i, j, getEntryRect(mRegions.get(i).get(j)));
-                            if (mTooltip != null)  // Toggle tooltip
-                                toggleTooltip(getEntryRect(mRegions.get(i).get(j)), data.get(i).getValue(j));
+                            if (mTooltip != null) {
+                                // Toggle tooltip
+                                toggleTooltip(getEntryRect(mRegions.get(i).get(j)), values);
+                            }
                             return true;
                         }
+                    }
+                }
+
+
             }
 
             if (mChartListener != null) mChartListener.onClick(ChartView.this);

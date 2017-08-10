@@ -4,6 +4,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/round_bck"
     android:padding="2dp"
-    android:src="@drawable/ic_grade"></ImageView>
+    android:src="@drawable/ic_grade"/>
 
 

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.view.View;
 
+import com.db.chart.renderer.AxisRenderer;
 import com.db.chart.util.Tools;
 import com.db.chart.animation.Animation;
 import com.db.chart.model.BarSet;
@@ -106,7 +107,7 @@ public class BarCardOne extends CardController {
         tip.setVerticalAlignment(Tooltip.Alignment.BOTTOM_TOP);
         tip.setDimensions((int) Tools.fromDpToPx(25), (int) Tools.fromDpToPx(25));
         tip.setMargins(0, 0, 0, (int) Tools.fromDpToPx(10));
-        tip.prepare(mChart.getEntriesArea(0).get(2), 0);
+        tip.prepare(mChart.getEntriesArea(0).get(2), new float[]{0});
 
         mChart.showTooltip(tip, true);
     }

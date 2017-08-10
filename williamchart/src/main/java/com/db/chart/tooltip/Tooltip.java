@@ -41,7 +41,8 @@ public class Tooltip extends RelativeLayout {
 
     private Alignment mHorizontalAlignment = Alignment.CENTER;
 
-    private TextView mTooltipValue;
+    private TextView mTooltipValue1;
+    private TextView mTooltipValue2;
 
     private OnTooltipEventListener mTooltipEventListener;
 
@@ -94,7 +95,20 @@ public class Tooltip extends RelativeLayout {
         layoutParent.setLayoutParams(
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(layoutParent);
-        mTooltipValue = (TextView) findViewById(valueId);
+        mTooltipValue1 = (TextView) findViewById(valueId);
+    }
+
+    public Tooltip(Context context, int layoutId, int valueId1, int valueId2) {
+
+        super(context);
+        init();
+
+        View layoutParent = inflate(getContext(), layoutId, null);
+        layoutParent.setLayoutParams(
+            new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addView(layoutParent);
+        mTooltipValue1 = (TextView) findViewById(valueId1);
+        mTooltipValue2 = (TextView) findViewById(valueId2);
     }
 
     private void init() {
@@ -118,7 +132,7 @@ public class Tooltip extends RelativeLayout {
      *              clicked {@link com.db.chart.model.ChartEntry}.
      * @param value Value of the entry.
      */
-    public void prepare(Rect rect, float value) {
+    public void prepare(Rect rect, float[] value) {
 
         // If no previous dimensions defined, the size of the area of the entry will be used.
         int width = (mWidth == -1) ? rect.width() : mWidth;
@@ -152,7 +166,8 @@ public class Tooltip extends RelativeLayout {
 
         setLayoutParams(layoutParams);
 
-        if (mTooltipValue != null) mTooltipValue.setText(mValueFormat.format(value));
+        if (mTooltipValue1 != null) mTooltipValue1.setText(mValueFormat.format(value[0]));
+        if (mTooltipValue2 != null && value.length>1) mTooltipValue2.setText(mValueFormat.format(value[1]));
     }
 
 
